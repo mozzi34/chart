@@ -1,36 +1,65 @@
-import { useState } from 'react';
+'use client'; // 클라이언트 컴포넌트임을 명시
+
 import { useForm } from 'react-hook-form';
 
-export default function LogInPage() {
-  const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-  });
+type LoginType = {
+  email: string;
+  password: string;
+};
 
-  const handleSubmit = (e) => {
-    // 필드 검사 후
-    const errors = validate();
-    // 에러 값을 설정하고
-    setErrors(errors);
-    // 잘못된 값이면 제출 처리를 중단한다.
-    if (Object.values(errors).some((v) => v)) {
-      return;
-    }
+const LoginPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginType>();
 
-    alert(JSON.stringify(values, null, 2));
+  const onSubmit = (data: LoginType) => {
+    console.log(data);
   };
 
-  return  ( <form onSubmit={handleSubmit}>
-  <input {/* 생략 */} />
-  {/* 이메일 오류메시지를 출력한다 */}
-  {errors.email && <span>{errors.email}</span>}
+  return (
+    <div className='pt-6 md:p-8 text-center md:text-left space-y-4 flex flex-col justify-center items-center pc:h-screen'>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='pc:max-w-3xl pc:w-full pc:justify-center'
+      >
+        <div className='flex flex-col'>
+          <label className='p-2'>Email</label>
+          <input
+            {...register('email', {
+              pattern: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
+              required: true,
+            })}
+            className='border p-2 max-w-5xl'
+          />
+          {errors.email && (
+            <span className='p-2 text-red-500 text-sm'>
+              이메일을 입력해 주세요
+            </span>
+          )}
+        </div>
 
-  <input {/* 생략 */} />
-  {/* 비밀번호 오류메시지를 출력한다 */}
-  {errors.password && <span>{errors.password}</span>}
+        <div className='flex flex-col'>
+          <label className='p-2'>Password</label>
+          <input
+            type='password'
+            {...register('password', { required: true, minLength: 8 })}
+            className='border p-2'
+          />
+          {errors.password && (
+            <span className='p-2 text-red-500 text-sm'>
+              비밀번호를 입력해 주세요
+            </span>
+          )}
+        </div>
 
-  {/* 생략 */}
-</form>);
-}
+        <button type='submit' className='border p-2 mt-10  pc:w-full'>
+          확인
+        </button>
+      </form>
+    </div>
+  );
+};
 
-
+export default LoginPage;
